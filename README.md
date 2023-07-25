@@ -43,6 +43,7 @@ Article Source: https://levelup.gitconnected.com/how-to-integrate-elastic-apm-ja
 
 Docker configuration
 There are three options for this configuration
+
 1. elasticsearch,and apm-server ssl is not enabled
    spring-boot-elastic-apm-integration\docker-compose.yml
 
@@ -61,7 +62,7 @@ It is only applied for option2 and option3 and all certs files need to be update
 spring-boot-elastic-apm-integration>docker cp b11763d2f4da:/usr/share/elasticsearch/config/certs/ca.zip .
 spring-boot-elastic-apm-integration>docker cp b11763d2f4da:/usr/share/elasticsearch/config/certs/certs.zip .  // b11763d2f4da is es container id
 
-5. add an apm integration in kibana http://localhost:5601/app/fleet/integrations/apm/add-integration
+5. add an apm integration
    Open Kibana and select Add integrations > Elastic APM.
    Click APM integration.
    Click Add Elastic APM.

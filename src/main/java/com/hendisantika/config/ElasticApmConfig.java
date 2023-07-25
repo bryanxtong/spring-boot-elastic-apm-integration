@@ -1,12 +1,12 @@
 package com.hendisantika.config;
 
 import co.elastic.apm.attach.ElasticApmAttacher;
+import jakarta.annotation.PostConstruct;
 import lombok.Setter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
