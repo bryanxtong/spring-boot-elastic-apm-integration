@@ -73,8 +73,9 @@ spring-boot-elastic-apm-integration>docker cp b11763d2f4da:/usr/share/elasticsea
    http-> http://localhost:8200
    https->https://localhost:8200
 
-6. if apm-server https is used(option3),use keytool to import the cert into the keystore and then change the url below, otherwise just ignore
-   use keytool to import a certificate into the truststore: keytool -import -alias apm-server-cert -file apm-server.crt -keystore C:\Java\jdk-17\lib\security\cacerts
+6. if apm-server https is used(option3),use keytool to import the cert into the keystore
+    keytool -import -alias apm-server-cert -file apm-server.crt -keystore C:\Java\jdk-17\lib\security\cacerts
+
 7. change elastic.apm.server-url to support ssl or not in spring boot project properties files
 
 
