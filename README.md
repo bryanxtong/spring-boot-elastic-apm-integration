@@ -4,12 +4,15 @@
 There are three options for this configuration
 
 1. elasticsearch,and apm-server ssl is not enabled
+
    spring-boot-elastic-apm-integration\docker-compose.yml
 
 2. APM Server outputs that support SSL, like Elasticsearch
+
    spring-boot-elastic-apm-integration\docker-compose-single-node-2.yml
 
 3. APM Server outputs that support SSL, like Elasticsearch and inputs also support SSL
+
    spring-boot-elastic-apm-integration\docker-compose-single-node-3.yml
 
 4. As the elasticsearch generates the ca and certificates and in the cert volume, elasticsearch and kibana user can have root privilege to read the cert files
@@ -19,7 +22,9 @@ There are three options for this configuration
 It is only applied for option2 and option3 and all certs files need to be updated locally
 
 spring-boot-elastic-apm-integration>docker cp b11763d2f4da:/usr/share/elasticsearch/config/certs/ca.zip .
+
 spring-boot-elastic-apm-integration>docker cp b11763d2f4da:/usr/share/elasticsearch/config/certs/certs.zip .  // b11763d2f4da is es container id
+
 
 5. add an apm integration
    Open Kibana and select Add integrations > Elastic APM.

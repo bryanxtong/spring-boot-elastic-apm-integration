@@ -145,7 +145,7 @@ services:
       "-E", "apm-server.ssl.key=config/certs/apm-server.key",
       "-E", "apm-server.ssl.certificate_authorities: ['config/certs/ca/ca.crt']",
       "-E", "output.elasticsearch.username=elastic",
-      "-E", "output.elasticsearch.password=changeme",
+      "-E", 'output.elasticsearch.password="${APM_PASSWORD}"',
       "-E", "output.elasticsearch.ssl.certificate=config/certs/es01.crt",
       "-E", "output.elasticsearch.ssl.key=config/certs/es01.key",
       "-E", "output.elasticsearch.ssl.certificate_authorities=config/certs/ca/ca.crt",
