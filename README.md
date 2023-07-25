@@ -1,6 +1,6 @@
 # spring-boot-elastic-apm-integration
 
-####  Docker configuration (elasticsearch 8.8.2) 
+####  Docker configuration (elasticsearch 8.8.2)
 There are three options for this configuration
 
 1. elasticsearch,and apm-server ssl is not enabled

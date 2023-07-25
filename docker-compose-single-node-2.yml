@@ -1,5 +1,4 @@
 version: "2.2"
-#es is using https and apm is connecting to elasticsearch using https, but It is using http itself http://localhost:8200
 services:
   setup:
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
