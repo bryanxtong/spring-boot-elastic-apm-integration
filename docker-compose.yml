@@ -1,49 +1,100 @@
 version: '2.2'
 
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+  setup:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+    volumes:
+      - shareloc:/usr/share/elasticsearch/config/shareloc
+    user: "0"
+    command: >
+      bash -c '
+        if [ x${ELASTIC_PASSWORD} == x ]; then
+          echo "Set the ELASTIC_PASSWORD environment variable in the .env file";
+          exit 1;
+        elif [ x${KIBANA_PASSWORD} == x ]; then
+          echo "Set the KIBANA_PASSWORD environment variable in the .env file";
+          exit 1;
+        fi;
+      
+        if [ ! -f config/shareloc/exist ]; then
+          touch config/shareloc/exist
+        fi;
+        echo "Setting file permissions"
+        find . -type d -exec chmod 750 \{\} \;;
+        find . -type f -exec chmod 640 \{\} \;;
+        echo "Waiting for Elasticsearch availability";
+        until curl -s http://es01:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
+        echo "Setting kibana_system password";
+        until curl -s -X POST -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" http://es01:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
+        #echo "Setting apm_system password";
+        #until curl -s -X POST -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" http://es01:9200/_security/user/apm_system/_password -d "{\"password\":\"${APM_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
+        echo "All done!";
+      '
+    healthcheck:
+      test: [ "CMD-SHELL", "[ -f config/shareloc/exist ]" ]
+      interval: 1s
+      timeout: 5s
+      retries: 120
+
+  es01:
+    depends_on:
+      setup:
+        condition: service_healthy
+    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+    volumes:
+      - shareloc:/usr/share/elasticsearch/config/shareloc
     environment:
       - "cluster.routing.allocation.disk.threshold_enabled=false"
       - "discovery.type=single-node"
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-changeme}
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
-      - 9200:9200
+      - "9200:9200"
     healthcheck:
-      test: [ 'CMD', 'curl', '-f', 'http://localhost:9200' ]
+      test: [ 'CMD', 'curl', '-f', "-u","elastic:changeme",'http://localhost:9200' ]
       interval: 10s
       timeout: 5s
       retries: 3
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.15.0
+    image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
     environment:
       - "SERVER_HOST=0.0.0.0"
+      - ELASTICSEARCH_HOSTS=["http://es01:9200"]
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
     ports:
-      - 5601:5601
+      - "5601:5601"
     healthcheck:
       test: [ 'CMD', 'curl', '-f', 'http://localhost:5601' ]
       interval: 10s
       timeout: 5s
       retries: 3
     depends_on:
-      elasticsearch:
+      es01:
         condition: service_healthy
 
   apm-server:
-    image: docker.elastic.co/apm/apm-server:7.14.1
+    image: docker.elastic.co/apm/apm-server:${STACK_VERSION}
     ports:
-      - 8200:8200
+      - "8200:8200"
+    command: [
+      "apm-server", "-e",
+      "-E", "apm-server.host=0.0.0.0:8200",
+      "-E", "output.elasticsearch.hosts=['http://es01:9200']",
+      "-E", "output.elasticsearch.username=elastic",
+      "-E", "output.elasticsearch.password=changeme"
+    ]
     environment:
-      - output.elasticsearch.hosts=['http://elasticsearch:9200']
-      - apm-server.host="0.0.0.0:8200"
-      - apm-server.secret_token="xxVpmQB2HMzCL9PgBHVrnxjNXXw5J7bd79DFm6sjBJR5HPXDhcF8MSb3vv4bpg44"
       - setup.kibana.host="kibana:5601"
       - setup.template.enabled=true
       - logging.to_files=false
     depends_on:
-      elasticsearch:
+      es01:
         condition: service_healthy
       kibana:
         condition: service_healthy
+volumes:
+  shareloc:
+    driver: local

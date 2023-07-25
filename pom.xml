@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.2</version>
+        <version>3.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.hendisantika</groupId>
@@ -14,7 +14,7 @@
     <name>spring-boot-elastic-apm-integration</name>
     <description>Elastic APM Spring Boot Integration</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
     </properties>
     <dependencies>
         <dependency>
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>co.elastic.apm</groupId>
             <artifactId>apm-agent-attach</artifactId>
-            <version>1.20.0</version>
+            <version>1.39.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
