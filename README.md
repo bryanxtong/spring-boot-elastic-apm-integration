@@ -44,16 +44,16 @@ Article Source: https://levelup.gitconnected.com/how-to-integrate-elastic-apm-ja
 Docker configuration
 There are three options for this configuration
 
-1. elasticsearch,and apm-server ssl is not enabled
+option 1. elasticsearch,and apm-server ssl is not enabled
    spring-boot-elastic-apm-integration\docker-compose.yml
 
-2. APM Server outputs that support SSL, like Elasticsearch
+option 2. APM Server outputs that support SSL, like Elasticsearch
    spring-boot-elastic-apm-integration\docker-compose-single-node-2.yml
 
-3. APM Server outputs that support SSL, like Elasticsearch and inputs also support SSL
+option 3. APM Server outputs that support SSL, like Elasticsearch and inputs also support SSL
    spring-boot-elastic-apm-integration\docker-compose-single-node-3.yml
 
-4. As the elasticsearch generates the ca and certificates and in the cert volume, elasticsearch and kibana user can have root privilege to read the cert files
+1. As the elasticsearch generates the ca and certificates and in the cert volume, elasticsearch and kibana user can have root privilege to read the cert files
 but apm-server user cannot. So the following steps needs to be done after starting the elasticsearch docker container first time only to copy the certificates from the docker to the local hosts
 and unzip them to override them in the project working dir.(start docker-compose and copy files in the first time only and restart docker-compose and right now I could not find a good way to resolve it.)
 
@@ -62,7 +62,7 @@ It is only applied for option2 and option3 and all certs files need to be update
 spring-boot-elastic-apm-integration>docker cp b11763d2f4da:/usr/share/elasticsearch/config/certs/ca.zip .
 spring-boot-elastic-apm-integration>docker cp b11763d2f4da:/usr/share/elasticsearch/config/certs/certs.zip .  // b11763d2f4da is es container id
 
-5. add an apm integration
+2. add an apm integration
    Open Kibana and select Add integrations > Elastic APM.
    Click APM integration.
    Click Add Elastic APM.
@@ -73,10 +73,10 @@ spring-boot-elastic-apm-integration>docker cp b11763d2f4da:/usr/share/elasticsea
    http-> http://localhost:8200
    https->https://localhost:8200
 
-6. if apm-server https is used(option3),use keytool to import the cert into the keystore
+3. if apm-server https is used(option3),use keytool to import the cert into the keystore
     keytool -import -alias apm-server-cert -file apm-server.crt -keystore C:\Java\jdk-17\lib\security\cacerts
 
-7. change elastic.apm.server-url to support ssl or not in spring boot project properties files
+4. change elastic.apm.server-url to support ssl or not in spring boot project properties files
 
 
 
